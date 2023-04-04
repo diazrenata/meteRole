@@ -1,0 +1,83 @@
+---
+title: "basic_wf"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{basic_wf}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(meteRole)
+
+library(roleR)
+library(dplyr)
+library(ggplot2)
+theme_set(theme_bw())
+set.seed(33) #jbp
+### Setting up a roleExperiment
+
+#### Replicates of the same parameter settings
+
+params1 <- untbParams(individuals_local = 100, individuals_meta = 1000,
+                      species_meta = 50,
+                      speciation = 0.2,
+                      dispersal_prob = 0.1, init_type = 'oceanic_island',
+                      niter = 10000, niterTimestep = 100)
+
+paramsList1 <- list(a= params1, b= params1, c=params1, d= params1, e=params1)
+
+trial1 <- roleExperiment(paramsList1)
+
+results1 <- runRole(trial1)
+
+row_from_modelSteps <- results1@modelRuns[[1]]@modelSteps[[10]]@localComm@indSpecies
+
+row_df <- package_timestep(row_from_modelSteps)
+
+meteZscore(row_df)
+```
+
+
+```{r}
+
+a_model <- results1@modelRuns[[1]]
+
+model_zs <- apply_over_steps(a_model)
+
+ggplot(model_zs, aes(step, z)) + geom_point() + geom_ribbon(aes(ymin = -1.96, ymax = 1.96), alpha = .2)
+
+```
+
+
+```{r}
+
+
+
+params4 <-  roleParams(individuals_local = 100, individuals_meta = 1000, 
+                       niter = 10000, niterTimestep = 100, neut_delta = 0, 
+                       comp_sigma = .05, dispersal_prob = function(iter){return(ifelse(iter < 5000, .001, ifelse(iter < 6000, .25, .001)))}) 
+
+
+
+paramsList4 <- list(params4, params4, params4, params4, params4)
+
+trial4 <- roleExperiment(paramsList4)
+
+results4 <- runRole(trial4)
+
+a_model_pulse <- results4@modelRuns[[4]]
+
+model_zs_pulse <- apply_over_steps(a_model_pulse)
+
+ggplot(model_zs_pulse, aes(step, z)) + geom_point() + geom_ribbon(aes(ymin = -1.96, ymax = 1.96), alpha = .2)
+
+
+```
