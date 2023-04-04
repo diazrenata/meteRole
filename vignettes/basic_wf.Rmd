@@ -63,7 +63,7 @@ ggplot(model_zs, aes(step, z)) + geom_point() + geom_ribbon(aes(ymin = -1.96, ym
 
 params4 <-  roleParams(individuals_local = 100, individuals_meta = 1000, 
                        niter = 10000, niterTimestep = 100, neut_delta = 0, 
-                       comp_sigma = .05, dispersal_prob = function(iter){return(ifelse(iter < 5000, .001, ifelse(iter < 6000, .25, .001)))}) 
+                       comp_sigma = .05, dispersal_prob = function(iter){return(ifelse(iter < 5000, .5, ifelse(iter < 6000, .25, .001)))}) 
 
 
 
@@ -72,6 +72,8 @@ paramsList4 <- list(params4, params4, params4, params4, params4)
 trial4 <- roleExperiment(paramsList4)
 
 results4 <- runRole(trial4)
+
+
 
 a_model_pulse <- results4@modelRuns[[4]]
 
