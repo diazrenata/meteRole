@@ -17,7 +17,18 @@
 #' @importFrom meteR meteESF sad
 meteZscore <- function(packaged_timestep, nrep = 999, return.sim = FALSE, ...) {
 
+  if(nrow(packaged_timestep) < 2) {
+    return(NA)
+  }
+
   this_esf <- meteR::meteESF(packaged_timestep$row_from_modelSteps, packaged_timestep$Freq)
+
+  foo <- try(meteR::sad(this_esf))
+
+  if("try-error" %in% class(foo)) {
+    return(NA)
+  }
+
   x <- meteR::sad(this_esf)
 
 

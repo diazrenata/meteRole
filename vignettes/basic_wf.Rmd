@@ -21,7 +21,7 @@ library(roleR)
 library(dplyr)
 library(ggplot2)
 theme_set(theme_bw())
-set.seed(33) #jbp
+set.seed(1989) #jbp
 ### Setting up a roleExperiment
 
 #### Replicates of the same parameter settings
@@ -43,6 +43,8 @@ row_from_modelSteps <- results1@modelRuns[[1]]@modelSteps[[10]]@localComm@indSpe
 row_df <- package_timestep(row_from_modelSteps)
 
 meteZscore(row_df)
+
+r1_ss <- getSumStats(results1@modelRuns[[1]])
 ```
 
 
@@ -62,20 +64,21 @@ ggplot(model_zs, aes(step, z)) + geom_point() + geom_ribbon(aes(ymin = -1.96, ym
 
 
 params4 <-  roleParams(individuals_local = 100, individuals_meta = 1000, 
-                       niter = 10000, niterTimestep = 100, neut_delta = 0, 
-                       comp_sigma = .05, dispersal_prob = function(iter){return(ifelse(iter < 5000, .5, ifelse(iter < 6000, .25, .001)))}) 
+                       niter = 10000, niterTimestep = 100, neut_delta = 0, speciation_local = .02,
+                       comp_sigma = .0001, dispersal_prob = function(iter){return(ifelse(iter < 5000, .5, ifelse(iter < 6000, .25, .001)))}) 
 
 
 
-paramsList4 <- list(params4, params4, params4, params4, params4)
+paramsList4 <- list(params4)
 
 trial4 <- roleExperiment(paramsList4)
 
 results4 <- runRole(trial4)
 
 
+r4_ss <- getSumStats(results4)
 
-a_model_pulse <- results4@modelRuns[[4]]
+a_model_pulse <- results4@modelRuns[[1]]
 
 model_zs_pulse <- apply_over_steps(a_model_pulse)
 
